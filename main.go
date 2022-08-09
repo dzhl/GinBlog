@@ -1,5 +1,7 @@
 package main
 
-func init() {
-	print("a")
+import "ginblog/routes"
+
+func main() {
+	routes.InitRouter()
 }
