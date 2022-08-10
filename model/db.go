@@ -13,9 +13,8 @@ var db *gorm.DB
 var err error
 
 func InitDb() {
-	print("开始启动")
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", utils.DbUser, utils.DbPassword, utils.DbHost, utils.DbPort, utils.BbName)
-	print(dsn)
+
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		fmt.Print("数据库连接错误")
