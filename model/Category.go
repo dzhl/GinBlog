@@ -14,7 +14,7 @@ func CheckCategory(name string) (code int) {
 	var cat Category
 	db.Where("name=?", name).First(&cat)
 	if cat.ID > 0 {
-		return errmsg.ERROR_USERNAME_USED
+		return errmsg.ERROR_CATENAME_USED
 	}
 	return errmsg.SUCCSE
 }
