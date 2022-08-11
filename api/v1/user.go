@@ -9,11 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//检查用户是否存在
-func UserExist(c *gin.Context) {
-
-}
-
 //添加用户
 func AddUser(c *gin.Context) {
 	var data model.User
@@ -51,10 +46,29 @@ func GetUsers(c *gin.Context) {
 
 //编辑用户列
 func EditUser(c *gin.Context) {
-
+	//model.CheckUser()
+	id, _ := strconv.Atoi(c.Param("id"))
+	var data model.User
+	_ = c.ShouldBindJSON(&data)
+	code := model.CheckUser(data.Username)
+	if code == errmsg.SUCCSE {
+		code = model.EditUser(id, &data)
+	} else {
+		c.Abort()
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": code,
+		"data":   data,
+		"msg":    errmsg.GetErrMsg(code),
+	})
 }
 
 //删除用户
 func DeleteUser(c *gin.Context) {
-
+	id, _ := strconv.Atoi(c.Param("id"))
+	code := model.DeleteUser(id)
+	c.JSON(http.StatusOK, gin.H{
+		"status": code,
+		"msg":    errmsg.GetErrMsg(code),
+	})
 }

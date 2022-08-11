@@ -1,8 +1,11 @@
 package model
 
 import (
+	"encoding/base64"
 	"ginblog/utils/errmsg"
+	"log"
 
+	"golang.org/x/crypto/scrypt"
 	"gorm.io/gorm"
 )
 
@@ -25,11 +28,25 @@ func CheckUser(name string) (code int) {
 
 //新增用户
 func CreateUser(data *User) int {
+	data.Password = ScryptPW(data.Password)
 	err := db.Create(&data).Error
 	if err != nil {
 		return errmsg.ERROR
 	}
 	return errmsg.SUCCSE
+}
+
+//加密密码
+func ScryptPW(password string) string {
+	const KeyLen = 10
+	//salt := make([]byte, 8)
+	salt := []byte{12, 21, 21, 22, 23, 11, 33, 65}
+	HashPw, err := scrypt.Key([]byte(password), salt, 16384, 8, 1, KeyLen)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fpw := base64.StdEncoding.EncodeToString(HashPw)
+	return fpw
 }
 
 //查询用户列表
@@ -40,4 +57,27 @@ func GetUsers(pageSize int, pageNum int) []User {
 		return nil
 	}
 	return users
+}
+
+//编辑用户
+func EditUser(id int, data *User) int {
+
+	var maps = make(map[string]interface{})
+	maps["username"] = data.Username
+	maps["role"] = data.Role
+	err := db.Model(&User{}).Where("id=?", id).Updates(&maps).Error
+	if err != nil {
+		return errmsg.ERROR
+	}
+	return errmsg.SUCCSE
+}
+
+//删除用户
+func DeleteUser(id int) int {
+	var user User
+	err := db.Where("id=?", id).Delete(&user).Error
+	if err != nil {
+		return errmsg.ERROR
+	}
+	return errmsg.SUCCSE
 }
