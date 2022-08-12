@@ -81,3 +81,22 @@ func DeleteUser(id int) int {
 	}
 	return errmsg.SUCCSE
 }
+
+//检查用户登录
+func CheckLogin(username, password string) int {
+	// code:=CheckUser(username)
+	// if code==errmsg.ERROR_USER_NOT_EXIST
+	var user User
+	var code = errmsg.SUCCSE
+	db.Where("username=?", username).First(&user)
+	if user.ID == 0 {
+		code = errmsg.ERROR_USER_NOT_EXIST
+	}
+	if ScryptPW(password) != user.Password {
+		code = errmsg.ERROR_PASSWORD_WRONG
+	}
+	if user.Role != 0 {
+		code = errmsg.ERROR_USER_NO_RIGHT
+	}
+	return code
+}
