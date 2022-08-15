@@ -16,7 +16,7 @@ type User struct {
 	Role     int    `gorm:"type:int" json:"role"`
 }
 
-//检查用户是否存在
+// 检查用户是否存在
 func CheckUser(name string) (code int) {
 	var users User
 	db.Where("username=?", name).First(&users)
@@ -26,7 +26,7 @@ func CheckUser(name string) (code int) {
 	return errmsg.SUCCSE
 }
 
-//新增用户
+// 新增用户
 func CreateUser(data *User) int {
 	data.Password = ScryptPW(data.Password)
 	err := db.Create(&data).Error
@@ -36,7 +36,7 @@ func CreateUser(data *User) int {
 	return errmsg.SUCCSE
 }
 
-//加密密码
+// 加密密码
 func ScryptPW(password string) string {
 	const KeyLen = 10
 	//salt := make([]byte, 8)
@@ -49,7 +49,7 @@ func ScryptPW(password string) string {
 	return fpw
 }
 
-//查询用户列表
+// 查询用户列表
 func GetUsers(pageSize int, pageNum int) []User {
 	var users []User
 	err = db.Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&users).Error
@@ -59,7 +59,7 @@ func GetUsers(pageSize int, pageNum int) []User {
 	return users
 }
 
-//编辑用户
+// 编辑用户
 func EditUser(id int, data *User) int {
 
 	var maps = make(map[string]interface{})
@@ -72,7 +72,7 @@ func EditUser(id int, data *User) int {
 	return errmsg.SUCCSE
 }
 
-//删除用户
+// 删除用户
 func DeleteUser(id int) int {
 	var user User
 	err := db.Where("id=?", id).Delete(&user).Error
@@ -82,7 +82,7 @@ func DeleteUser(id int) int {
 	return errmsg.SUCCSE
 }
 
-//检查用户登录
+// 检查用户登录
 func CheckLogin(username, password string) int {
 	// code:=CheckUser(username)
 	// if code==errmsg.ERROR_USER_NOT_EXIST
@@ -91,12 +91,15 @@ func CheckLogin(username, password string) int {
 	db.Where("username=?", username).First(&user)
 	if user.ID == 0 {
 		code = errmsg.ERROR_USER_NOT_EXIST
+		return code
 	}
 	if ScryptPW(password) != user.Password {
 		code = errmsg.ERROR_PASSWORD_WRONG
+		return code
 	}
 	if user.Role != 0 {
 		code = errmsg.ERROR_USER_NO_RIGHT
+		return code
 	}
 	return code
 }
