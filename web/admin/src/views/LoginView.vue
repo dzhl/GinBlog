@@ -8,13 +8,13 @@
           </a-input>
         </a-form-model-item>
         <a-form-model-item prop="password">
-          <a-input v-model="formdata.password" placeholder="输入密码" type="password">
+          <a-input v-model="formdata.password" placeholder="输入密码" type="password" v-on:keyup.enter="onSubmit">
             <a-icon slot="prefix" type="lock" style="color:rgba(0,0,0,.25)" />
           </a-input>
         </a-form-model-item>
         <a-form-model-item class="loginBtn">
           <a-button type="primary" style="margin:20px" @click="onSubmit">登录</a-button>
-          <a-button type="info" @click="resetForm">取消</a-button>
+          <a-button type="info" @click="resetForm" >取消</a-button>
         </a-form-model-item>
       </a-form-model>
     </div>
